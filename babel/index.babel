@@ -1,0 +1,74 @@
+const defaultUser = 'Sestri4kina';
+const userAPIUrl = `https://api.github.com/users/${defaultUser}`;
+
+const githubUserBlock = document.getElementById('github_user');
+const input = document.getElementById('get_user');
+const search = document.getElementById('user_submit');
+
+const createNode = (element) => { return document.createElement(element); }
+const append = (parent, el) => { return parent.appendChild(el); }
+
+const fetchGitUser = (url) => {
+  input.focus();
+  fetch(url)
+    .then( resp => resp.json())
+    .then( data => {
+      let user = data;
+
+      let wrapper = createNode('div'),
+          content = createNode('div'),
+          title = createNode('h3'),
+          img = createNode('img'),
+          link = createNode('a'),
+          info = createNode('p'),
+          warning = createNode('div');
+      
+      if (user.message == "Not Found") {
+        input.focus();
+        githubUserBlock.innerHTML = '';
+        
+        warning.innerHTML = "This user was not found! Try something else.";
+        warning.classList.add('alert', 'alert-danger');
+        
+        append(githubUserBlock, warning);
+        return;
+      }
+
+      title.innerHTML = user.login;
+      link.href = user.html_url;
+      link.setAttribute('target', '_blank');
+      img.src = user.avatar_url;
+      info.innerHTML = user.bio;
+
+      wrapper.classList.add('media-left');  
+      img.classList.add('media');
+      content.classList.add('media-body');
+      title.classList.add('media-heading');
+
+      append(githubUserBlock, link);
+      append(link, wrapper);
+      append(link, content);
+      append(wrapper, img);
+      append(content, title);
+      append(content, info);
+    })
+    .catch( error => { console.log(error); });
+}
+
+const searchUser = () => {
+  const value = input.value;
+  const url = `https://api.github.com/users/${value}`;
+  
+  input.value='';
+  githubUserBlock.innerHTML = '';
+  fetchGitUser(url);
+};
+
+search.addEventListener('click', searchUser);
+input.addEventListener('keyup', (e) => {
+  if (e.keyCode == 13) {
+    searchUser();
+  }
+});
+
+fetchGitUser(userAPIUrl);

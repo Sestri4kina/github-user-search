@@ -1,0 +1,17 @@
+body {
+  background: #ededed;
+  font-family: sans-serif;
+  padding: 2em;
+}
+
+a {
+  color: #333;
+}
+a:hover {
+  color: #333;
+  text-decoration: none;
+}
+
+.alert {
+  margin: 0;
+}
